@@ -55,7 +55,8 @@ def test():
     It runs nosetest automatically.
     """
     from subprocess import call
-    call(['nosetests'])
+    call(['nosetests',
+          '--with-coverage', '--cover-package=app', '--cover-branches'])
 
 
 if __name__ == '__main__':
