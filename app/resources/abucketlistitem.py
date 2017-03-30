@@ -1,6 +1,6 @@
 from flask_restful import Resource, request
-from api.models import BucketListItem
-from api.common.helpers import abucketlistitem, delete_bucketlist, update_database
+from app.models import BucketListItem
+from app.common.helpers import abucketlistitem, delete_bucketlist, update_database
 
 
 class ABucketListItem(Resource):
@@ -24,8 +24,11 @@ class ABucketListItem(Resource):
 
     def put(self, bucketlist_id, bucketitem_id):
         name = request.form.get('name')
+        done = request.form.get('done')
+        done = True if str(done).lower() == 'true' else False
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
         bucketlist_item.name = name
+        bucketlist_item.done = done
         if update_database():
             bucket_list_item = abucketlistitem(bucketlist_item)
             return {'BucketList Item': bucket_list_item}, 201

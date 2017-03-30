@@ -1,6 +1,6 @@
 from flask_restful import abort
-from api.models import User, BucketList, BucketListItem
-from api import db
+from app.models import User, BucketList, BucketListItem
+from app import db
 
 def abucketlistitem(bucketitem):
     """
@@ -10,8 +10,8 @@ def abucketlistitem(bucketitem):
     return {
         'id': bucketitem.id_no,
         'name': bucketitem.name,
-        'date_created': bucketitem.date_created,
-        'date_modified': bucketitem.date_modified,
+        'date_created': str(bucketitem.date_created),
+        'date_modified': str(bucketitem.date_modified),
         'done': bucketitem.done
     }
 
@@ -33,8 +33,8 @@ def getbucketlist(bucketlist):
         'id': bucketlist.id_no,
         'name': bucketlist.name,
         'items': getallbucketlistitem(bucketlist.id_no),
-        'date_created': bucketlist.date_created,
-        'date_modified': bucketlist.date_modified,
+        'date_created': str(bucketlist.date_created),
+        'date_modified': str(bucketlist.date_modified),
         'created_by': bucketlist.created_by
     }
 
