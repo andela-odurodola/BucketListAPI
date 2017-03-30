@@ -49,6 +49,14 @@ def dropdb():
             print("Dropped the database")
 
 
+@manager.command
+def test():
+    """
+    It runs nosetest automatically.
+    """
+    from subprocess import call
+    call(['nosetests'])
+
 
 if __name__ == '__main__':
     manager.run()
