@@ -5,6 +5,8 @@ from app.common.helpers import getbucketlist, save_into_database
 
 class AllBucketLists(Resource):
     # It returns all bucketlists.
+    # decorators = [auth.login_required]
+
     def get(self):
         bucketlist = BucketList.query.all()
         bucket_list = [getbucketlist(each_bucketlist)

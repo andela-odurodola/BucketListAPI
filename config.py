@@ -53,7 +53,7 @@ class TestingConfig(Config):
 
     USE_RATE_LIMITS = False
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'bucket.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'test_bucket.db')
 
 class ProductionConfig(Config):
     """

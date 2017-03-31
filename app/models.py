@@ -4,7 +4,7 @@ from datetime import datetime
 
 from sqlalchemy import desc
 from flask_login import UserMixin
-from werkzeug.security import check_password_hash, generate_password_hash 
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
 
@@ -55,7 +55,7 @@ class BucketListItem(db.Model):
     id_no = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    date_modified = db.Column(db.DateTime, default=datetime.utcnow)
+    date_modified = db.Column(db.DateTime, default=datetime.utcnow) # onupdate=datetime.utcnow
     done = db.Column(db.Boolean, default=False)
     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucket_list.id_no'), nullable=False)
 

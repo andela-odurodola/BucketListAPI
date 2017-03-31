@@ -23,12 +23,16 @@ class ABucketListItem(Resource):
         return 'BucketListItem {} has been deleted'.format(bucketitem_id), 204
 
     def put(self, bucketlist_id, bucketitem_id):
-        name = request.form.get('name')
-        done = request.form.get('done')
-        done = True if str(done).lower() == 'true' else False
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
-        bucketlist_item.name = name
-        bucketlist_item.done = done
+
+        name = request.form.get('name')
+        bucketlist_item.name = name or bucketlist_item.name
+
+        done = request.form.get('done')
+        if done:
+            done = (done.lower() == 'true')
+            bucketlist_item.done = done
+
         if update_database():
             bucket_list_item = abucketlistitem(bucketlist_item)
             return {'BucketList Item': bucket_list_item}, 201

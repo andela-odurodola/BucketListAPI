@@ -42,25 +42,27 @@ def getbucketlist(bucketlist):
 def delete_bucketlist(bucketlist):
     # It deletes a single bucketlist
 
-    if bucketlist:
+    try:
         db.session.delete(bucketlist)
         db.session.commit()
-    else:
+        return True
+    except:
         abort(404)
 
 
 def update_database():
     # It updates the content of the database.
-    if db.session.commit():
+    try:
+        db.session.commit()
         return True
-    else:
+    except:
         return False
 
 
 def save_into_database(bucketlist):
-    if bucketlist:
+    try:
         db.session.add(bucketlist)
         db.session.commit()
         return True
-    else:
+    except:
         abort(400)

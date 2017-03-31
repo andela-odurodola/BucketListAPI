@@ -1,5 +1,5 @@
 from flask import request
-from flask_restful import Resource, Api, abort
+from flask_restful import Resource
 from app.models import BucketList
 from app.common.helpers import getbucketlist, delete_bucketlist, update_database
 # check if bucketlistid exists and return an error if not
