@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import config
 
+
 db = SQLAlchemy()
 # api = Api(app, prefix='/api/v1')
 

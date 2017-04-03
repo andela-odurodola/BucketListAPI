@@ -1,4 +1,5 @@
 import unittest
+import json
 from flask import Flask
 
 from app import create_app, db
@@ -8,7 +9,6 @@ from app.models import User, BucketList, BucketListItem
 class BaseTest(unittest.TestCase):
     """
     Base test to be used by each test method.
-    It enables the DRY principles to be followed.
     """
 
     def setUp(self):
@@ -43,10 +43,16 @@ class TestResources(BaseTest):
         pass
 
     def test_post_bucketlist_with_existing_name(self):
-        pass
+        response = self.client.post('/api/v1/bucketlists/', data={'name': 'Leggo'})
+        output = (response.data)
+        self.assertTrue(b'406', output)
+        self.assertIn(b'A Bucketlist with the name already exists', output)
 
     def test_post_bucketlist_with_no_name(self):
-        pass
+        response = self.client.post('/api/v1/bucketlists/', data={'name': ''})
+        output = (response.data)
+        self.assertTrue(b'406', output)
+        self.assertIn(b'The BucketList name cannot be empty', output)
 
     def test_for_invalid_bucketlist_id(self):
         pass

@@ -1,5 +1,6 @@
 from flask_restful import Resource, request, abort
 from app.models import BucketList
+from app.common.errors import custom_errors
 from app.common.helpers import getbucketlist, save_into_database
 
 
@@ -15,10 +16,13 @@ class AllBucketLists(Resource):
 
     def post(self):
         name = request.form.get('name')
-
+        bucketlist = BucketList.query.filter_by(name=name).first()
         if name:
-            bucket_list = BucketList(name=name)
-            if save_into_database(bucket_list):
-                return getbucketlist(bucket_list), 201
+            if bucketlist:
+                return custom_errors['BucketListNameExistsError']
+            else:
+                bucket_list = BucketList(name=name)
+                if save_into_database(bucket_list):
+                    return getbucketlist(bucket_list), 201
         else:
-            return 'BucketList has no name', 406
+            return custom_errors['BucketListNameIsEmpty']
