@@ -1,4 +1,4 @@
-#!flask/bin/python/
+#!flask/bin/python3/
 
 from flask import Flask, Blueprint
 from flask_restful import Resource, Api
@@ -8,7 +8,6 @@ from config import config
 
 
 db = SQLAlchemy()
-# api = Api(app, prefix='/api/v1')
 
 
 def create_app(config_name):

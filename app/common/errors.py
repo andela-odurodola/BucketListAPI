@@ -1,3 +1,4 @@
+#!flask/bin/python3/
 from flask_restful import abort
 
 from app.models import BucketList

@@ -18,7 +18,8 @@ def abucketlistitem(bucketitem):
 
 def getallbucketlistitem(bucketlist_id):
     """
-    It returns all bucketlist items for a particular bucketlist id.
+    It returns all bucketlist items for a
+    particular bucketlist id.
     """
     list_items = BucketListItem.query.filter_by(id_no=bucketlist_id).all()
     return [abucketlistitem(bucketitem)
@@ -27,7 +28,8 @@ def getallbucketlistitem(bucketlist_id):
 
 def getbucketlist(bucketlist):
     """
-    It returns a single bucketlist.
+    It returns a single bucketlist based on the
+    bucket id specified.
     """
     return {
         'id': bucketlist.id_no,
@@ -49,8 +51,6 @@ def delete_bucketlist(bucketlist):
     except:
         db.session.rollback()
         raise
-    # finally:
-    #     db.session.close()
 
 
 def update_database():

@@ -1,4 +1,4 @@
-#!flask/bin/python/
+#!flask/bin/python3/
 
 from datetime import datetime
 
