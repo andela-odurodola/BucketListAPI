@@ -9,6 +9,7 @@ from app.models import User, BucketList, BucketListItem
 class BaseTest(unittest.TestCase):
     """
     Base test to be used by each test method.
+    The test details are loaded each time a test is being run.
     """
 
     def setUp(self):
@@ -35,13 +36,15 @@ class BaseTest(unittest.TestCase):
 
 
 class TestResources(BaseTest):
-    # it tests for each Resource
+    """
+    Unit tests for each resource method such as GET, POST,
+    PUT and DELETE.
+    """
 
-    def test_post_bucketlist_without_login(self):
-        pass
-
-    def test_post_bucketlist_with_login(self):
-        pass
+    def test_post_bucketlist(self):
+        response = self.client.post('/api/v1/bucketlists/', data={'name': 'Win a Soul'})
+        output = response.status_code
+        self.assertTrue(output == 201)
 
     def test_post_bucketlist_with_existing_name(self):
         response = self.client.post('/api/v1/bucketlists/', data={'name': 'Leggo'})
@@ -77,9 +80,10 @@ class TestResources(BaseTest):
         self.assertTrue(re == 400)
         self.assertTrue(b'The Bucketlist is not updated', output)
 
-    # def test_delete_a_bucketlist(self):
-    #     response = self.client.delete('/api/v1/bucketlists/2')
-    #     pass
+    def test_delete_a_bucketlist(self):
+        response = self.client.delete('/api/v1/bucketlists/1')
+        output = response.status_code
+        self.assertTrue(output == 200)
 
     def test_get_a_bucketlist(self):
         response = self.client.get('/api/v1/bucketlists/1')
@@ -123,21 +127,23 @@ class TestResources(BaseTest):
         result = response.data
         self.assertIn(b'BucketList Item has no name', result)
 
-    # def test_delete_a_bucketlist_item(self):
-    #     pass
-    #
+    def test_delete_a_bucketlist_item(self):
+        response = self.client.delete('/api/v1/bucketlists/1/items/1')
+        output = response.status_code
+        self.assertTrue(output == 200)
+
     def test_get_a_bucketlist_item(self):
-        pass
+        response = self.client.get('/api/v1/bucketlists/1/items/1')
+        result = response.status_code
+        self.assertTrue(result == 200)
 
-    def test_put_bucketlist_item_fail(self):
-        response = self.client.put('/api/v1/bucketlists/1/item/1', data={'name': ''})
-        output = response.data
-        re = response.status_code
-        self.assertTrue(re == 400)
-        self.assertTrue(b'The Bucketlist is not updated', output)
-
-    # def test_put_bucketlist_successfully(self):
-    #     pass
+    def test_put_bucketlist_successfully(self):
+        response = self.client.put('/api/v1/bucketlists/1/items/1', data={'done': True})
+        output = response.status_code
+        self.assertTrue(output == 201)
+        bucketitem1 = BucketListItem.query.filter_by(done=False).first()
+        bucketitem2 = BucketListItem.query.filter_by(done=True).first()
+        self.assertFalse(bucketitem1 == bucketitem2)
 
 
 if __name__ == '__main__':

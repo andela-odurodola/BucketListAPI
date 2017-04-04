@@ -21,7 +21,7 @@ class ABucketList(Resource):
     def delete(self, bucketlist_id):
         bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
         delete_bucketlist(bucketlist)
-        return custom_errors['BucketListDeleted'], 204
+        return custom_errors['BucketListDeleted'], 200
 
     def put(self, bucketlist_id):
         """

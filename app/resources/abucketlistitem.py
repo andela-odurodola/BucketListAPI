@@ -22,7 +22,7 @@ class ABucketListItem(Resource):
     def delete(self, bucketlist_id, bucketitem_id):
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
         delete_bucketlist(bucketlist_item)
-        return 'BucketListItem {} has been deleted'.format(bucketitem_id), 204
+        return 'BucketListItem {} has been deleted'.format(bucketitem_id), 200
 
     def put(self, bucketlist_id, bucketitem_id):
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
