@@ -47,7 +47,10 @@ def delete_bucketlist(bucketlist):
         db.session.commit()
         return True
     except:
-        abort(404)
+        db.session.rollback()
+        raise
+    finally:
+        db.session.close()
 
 
 def update_database():

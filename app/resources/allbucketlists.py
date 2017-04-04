@@ -19,10 +19,10 @@ class AllBucketLists(Resource):
         bucketlist = BucketList.query.filter_by(name=name).first()
         if name:
             if bucketlist:
-                return custom_errors['BucketListNameExistsError']
+                return custom_errors['BucketListNameExistsError'], 406
             else:
                 bucket_list = BucketList(name=name)
                 if save_into_database(bucket_list):
                     return getbucketlist(bucket_list), 201
         else:
-            return custom_errors['BucketListNameIsEmpty']
+            return custom_errors['BucketListNameIsEmpty'], 406

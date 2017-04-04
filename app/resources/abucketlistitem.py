@@ -1,5 +1,7 @@
 from flask_restful import Resource, request
+
 from app.models import BucketListItem
+from app.common.errors import custom_errors
 from app.common.helpers import abucketlistitem, delete_bucketlist, update_database
 
 
@@ -37,4 +39,4 @@ class ABucketListItem(Resource):
             bucket_list_item = abucketlistitem(bucketlist_item)
             return {'BucketList Item': bucket_list_item}, 201
         else:
-            return 'BucketList Item {} is not updated'.format(bucketitem_id), 400
+            return custom_errors['BucketListItemNotUpdated'], 400
