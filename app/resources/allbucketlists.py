@@ -1,4 +1,6 @@
+from flask_login import login_required
 from flask_restful import Resource, request, abort, url_for
+
 from app.models import BucketList
 from app.common.errors import custom_errors
 from app.common.helpers import getbucketlist, save_into_database
@@ -6,7 +8,7 @@ from app.common.helpers import getbucketlist, save_into_database
 
 class AllBucketLists(Resource):
     # It returns all bucketlists.
-    # decorators = [auth.login_required]
+    method_decorators = [login_required]
 
     def get(self):
         page = request.args.get('page', 1, type=int)

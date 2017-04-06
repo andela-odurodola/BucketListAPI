@@ -1,6 +1,16 @@
 from flask_restful import abort
+
 from app.models import User, BucketList, BucketListItem
 from app import db
+
+
+def user_detail(user):
+    """
+    After a successfull registration,
+    it welcomes the user.
+    """
+    return ('Welcome ' + str(user.username) + ' to the Bucketlist Service.')
+
 
 def abucketlistitem(bucketitem):
     """

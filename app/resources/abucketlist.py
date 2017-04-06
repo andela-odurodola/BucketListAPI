@@ -1,17 +1,19 @@
-from flask import request
-from flask_restful import Resource
+from flask_login import login_required
+from flask_restful import Resource, request
+
 from app.models import BucketList
 from app.common.errors import custom_errors, invalid_id
 from app.common.helpers import getbucketlist, delete_bucketlist, update_database
 # check if bucketlistid exists and return an error if not
 
 
+# @login_required
 class ABucketList(Resource):
     """
     It returns a single bucketlist response based
     on a particular request.
     """
-    method_decorators = [invalid_id]
+    method_decorators = [invalid_id, login_required]
 
     def get(self, bucketlist_id):
         bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()

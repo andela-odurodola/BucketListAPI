@@ -52,5 +52,13 @@ custom_errors = {
     'BucketListItemNotUpdated': {
         'message': 'BucketList Item is not updated',
         'status': 400
+    },
+    'UserNameExists': {
+        'message': 'The username already exist.Choose another',
+        'status': 406
+    },
+    'UserDetailsEmpty': {
+        'message': "User's details cannot be empty",
+        'status': 406
     }
 }
