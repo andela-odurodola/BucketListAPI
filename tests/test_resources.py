@@ -27,7 +27,7 @@ class BaseTest(unittest.TestCase):
         self.bucketlist1 = BucketList(name='See the world', created_by=self.user.username)
 
         self.bucketlistitem = BucketListItem(name='To greece', done=True, bucketlist_id=1)
-        db.session.add_all([self.user, self.bucketlist, self.bucketlistitem])
+        db.session.add_all([self.user, self.bucketlist, self.bucketlist1, self.bucketlistitem])
         db.session.commit()
 
 
@@ -147,6 +147,15 @@ class TestResources(BaseTest):
         bucketitem2 = BucketListItem.query.filter_by(done=True).first()
         self.assertFalse(bucketitem1 == bucketitem2)
 
+    def test_search_bucketlist_name(self):
+        response = self.client.get('/api/v1/bucketlists/?q=leggo')
+        result = response.status_code
+        self.assertTrue(result == 200)
+
+    def test_paginate_bucketlist(self):
+        response = self.client.get('/api/v1/bucketlists/?limit=50')
+        result = response.status_code
+        self.assertTrue(result == 200)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,7 +1,7 @@
 from flask_restful import Resource, request
 
 from app.models import BucketListItem
-from app.common.errors import custom_errors
+from app.common.errors import custom_errors, invalid_id, invalid_item_id, login_required
 from app.common.helpers import abucketlistitem, delete_bucketlist, update_database
 
 
@@ -10,6 +10,8 @@ class ABucketListItem(Resource):
     It retrieves a single bucket list item based
     on the bucket list id specified.
     """
+    method_decorators = [invalid_id, invalid_item_id, login_required]
+
     def get(self, bucketlist_id, bucketitem_id):
         """
         The query searches first by looking into the database

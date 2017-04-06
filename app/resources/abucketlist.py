@@ -1,9 +1,8 @@
-from flask import request
-from flask_restful import Resource
+from flask_restful import Resource, request
+
 from app.models import BucketList
-from app.common.errors import custom_errors, invalid_id
-from app.common.helpers import getbucketlist, delete_bucketlist, update_database
-# check if bucketlistid exists and return an error if not
+from app.common.errors import custom_errors, invalid_id, login_required
+from app.common.helpers import getbucketlist, delete_bucketlist, update_database, get_current_username
 
 
 class ABucketList(Resource):
@@ -11,7 +10,7 @@ class ABucketList(Resource):
     It returns a single bucketlist response based
     on a particular request.
     """
-    method_decorators = [invalid_id]
+    method_decorators = [invalid_id, login_required]
 
     def get(self, bucketlist_id):
         bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
@@ -28,11 +27,17 @@ class ABucketList(Resource):
         It updates the bucketlist with a particular id.
         """
         name = request.form.get('name')
-        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
-        bucketlist.name = name
-        if name:
-            if update_database():
-                bucket_list = getbucketlist(bucketlist)
-                return {'BucketList': bucket_list}, 201
+        token = request.headers.get('Token')
+        current_user = get_current_username(token)
+        bucketlist_check = BucketList.query.filter_by(name=name, created_by=current_user).first()
+        if bucketlist_check:
+            return custom_errors['BucketListAlreadyCreated'], 406
         else:
-            return custom_errors['BucketListNotUpdated'], 400
+            bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
+            bucketlist.name = name
+            if name:
+                if update_database():
+                    bucket_list = getbucketlist(bucketlist)
+                    return {'BucketList': bucket_list}, 201
+            else:
+                return custom_errors['BucketListNotUpdated'], 400
