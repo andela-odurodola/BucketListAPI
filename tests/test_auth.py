@@ -25,12 +25,11 @@ class BaseTest(unittest.TestCase):
 
 
 class TestAuthorization(BaseTest):
-    # it tests for each Resource
-
-    def test_invalid_login_details(self):
-        pass
 
     def test_login_with_valid_details(self):
+        pass
+
+    def test_invalid_login_details(self):
         pass
 
     def test_register_with_exisitng_username(self):
