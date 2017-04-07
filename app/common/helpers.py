@@ -9,7 +9,9 @@ def user_detail(user):
     After a successfull registration,
     it welcomes the user.
     """
-    return ('Welcome ' + str(user.username) + ' to the Bucketlist Service.')
+    return {
+        'message': 'Welcome ' + str(user.username) + ' to the Bucketlist Service.'
+    }
 
 def get_current_username(token):
     try:
