@@ -12,4 +12,15 @@ class Login_User(Resource):
     """
 
     def post(self):
-        
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            token = user.generate_auth_token()
+            user_check = user.verify_auth_token(token)
+            # return ("logged in successfuly as {}".format(user_check.username))
+            return {
+                'Output': 'logged in successfully as {}'.format(user_check.username),
+                'Token': token
+            }, 202
+        return custom_errors['IncorrectLoginDetails'], 400

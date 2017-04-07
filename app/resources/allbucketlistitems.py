@@ -1,13 +1,12 @@
-from flask_login import login_required
 from flask_restful import Resource, request
 
 from app.models import BucketListItem
-from app.common.errors import custom_errors
+from app.common.errors import custom_errors, invalid_id, login_required
 from app.common.helpers import abucketlistitem, save_into_database
 
 class AllBucketListItems(Resource):
 
-    method_decorators = [login_required]
+    method_decorators = [invalid_id, login_required]
 
     def get(self, bucketlist_id):
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id).all()
