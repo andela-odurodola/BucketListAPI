@@ -16,7 +16,6 @@ class Register_User(Resource):
         username = request.form.get('username')
         password = request.form.get('password')
         username_check = User.query.filter_by(username=username).first()
-        print(request.form.get('password'))
         if username and password:
             if username_check:
                 return custom_errors['UserNameExists'], 406

@@ -21,6 +21,6 @@ class Login_User(Resource):
             # return ("logged in successfuly as {}".format(user_check.username))
             return {
                 'Output': 'logged in successfully as {}'.format(user_check.username),
-                'Token': token
+                'Token': str(token)
             }, 202
         return custom_errors['IncorrectLoginDetails'], 400

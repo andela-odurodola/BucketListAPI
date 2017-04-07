@@ -41,7 +41,7 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def generate_auth_token(self, expiration=3600):
+    def generate_auth_token(self, expiration=36000):
         s = Serializer(current_app.config['SECRET_KEY'],
                        expires_in=expiration)
         return (s.dumps({'id': self.id_no}))
