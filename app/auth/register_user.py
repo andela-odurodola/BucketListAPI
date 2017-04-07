@@ -2,8 +2,8 @@ from flask import request, jsonify
 from flask_restful import Resource
 
 from app.models import User
-from app.common.custom_messages import CustomMessages
-from app.common.helpers import save_into_database, register_user
+from app.common.errors import custom_errors
+from app.common.helpers import save_into_database, user_detail
 
 
 class Register_User(Resource):
@@ -15,14 +15,13 @@ class Register_User(Resource):
     def post(self):
         username = request.form.get('username')
         password = request.form.get('password')
-
-        if not all([username, password]):
-            return CustomMessages.not_acceptable("User's details cannot be empty. Please specify a username and password"), 406
-        username_is_taken = bool(User.query.filter_by(username=username).first())
-        if username_is_taken:
-            return CustomMessages.not_acceptable('The username already exist.Choose another'), 406
-        user_info = User(username=username, password=password)
-        if save_into_database(user_info):
-            return(register_user(user_info)), 201
+        username_check = User.query.filter_by(username=username).first()
+        if username and password:
+            if username_check:
+                return custom_errors['UserNameExists'], 406
+            else:
+                user_info = User(username=username, password=password)
+                if save_into_database(user_info):
+                    return(user_detail(user_info)), 201
         else:
-            return CustomMessages.server_error('Account Creation not successfull'), 500
+            return custom_errors['UserDetailsEmpty'], 406
