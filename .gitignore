@@ -68,5 +68,4 @@ venv/
 ENV/
 
 # Database
-bucket.db
-test_bucket.db
+*.db
