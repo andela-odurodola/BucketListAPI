@@ -19,6 +19,15 @@ def login_user(user):
         token=str(user.generate_auth_token())
     )
 
+def user_detail(user):
+    """
+    After a successfull registration,
+    it welcomes the user.
+    """
+    return {
+        'message': 'Welcome ' + str(user.username) + ' to the Bucketlist Service.'
+    }
+
 def get_current_username(token):
     try:
         current_user = User.verify_auth_token(token)
