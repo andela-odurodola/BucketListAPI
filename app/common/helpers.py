@@ -38,7 +38,7 @@ def getallbucketlistitem(bucketlist_id):
     It returns all bucketlist items for a
     particular bucketlist id.
     """
-    list_items = BucketListItem.query.filter_by(id_no=bucketlist_id).all()
+    list_items = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id).all()
     return [abucketlistitem(bucketitem)
             for bucketitem in list_items]
 
