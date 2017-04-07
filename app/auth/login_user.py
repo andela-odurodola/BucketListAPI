@@ -18,7 +18,6 @@ class Login_User(Resource):
         if user and user.check_password(password):
             token = user.generate_auth_token()
             user_check = user.verify_auth_token(token)
-            # return ("logged in successfuly as {}".format(user_check.username))
             return {
                 'Output': 'logged in successfully as {}'.format(user_check.username),
                 'Token': str(token)
