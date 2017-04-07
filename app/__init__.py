@@ -25,8 +25,8 @@ def create_app(config_name):
     from app.resources.abucketlistitem import ABucketListItem
     from app.resources.allbucketlistitems import AllBucketListItems
     from app.resources.allbucketlists import AllBucketLists
-    from app.resources.register_user import Register_User
-    from app.resources.login_user import Login_User
+    from app.auth.register_user import Register_User
+    from app.auth.login_user import Login_User
 
     # Routes for each resource
     api.add_resource(Register_User, '/auth/register')
