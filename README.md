@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andela-odurodola/BucketListAPI.svg?branch=develop)](https://travis-ci.org/andela-odurodola/BucketListAPI)[![Coverage Status](https://coveralls.io/repos/github/andela-odurodola/BucketListAPI/badge.svg?branch=develop)](https://coveralls.io/github/andela-odurodola/BucketListAPI?branch=develop)
+
 ## BucketListAPI
 A flask-RESTful project for Bucketlists. A BucketList is a list of all the goals you want to achieve, dreams you want to fulfill and life experiences you desire to experience before you die (or hit the bucket). This API helps to create and manage bucketlists through protected API endpoints. That is, it requires authorization.
 
