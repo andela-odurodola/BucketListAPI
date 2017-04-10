@@ -28,6 +28,7 @@ def user_detail(user):
         'message': 'Welcome ' + str(user.username) + ' to the Bucketlist Service.'
     }
 
+
 def get_current_username(token):
     try:
         current_user = User.verify_auth_token(token)
