@@ -115,6 +115,8 @@ class TestResources(BaseTest):
         db.session.commit()
         response = self.client.get('/api/v1/bucketlists/1', headers={'Token': self.login_credentials()})
         self.assertTrue(response.status_code == 200)
+        bucketlist = BucketList.query.filter_by(id_no=1).first()
+        self.assertIsNotNone(bucketlist)
 
     def test_get_all_bucketlist(self):
         db.session.add_all([self.bucketlist, self.bucketlist1])

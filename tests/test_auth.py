@@ -38,6 +38,9 @@ class TestAuthorization(BaseTest):
         output = response.status_code
         self.assertEqual("Welcome dee to the Bucketlist Service.", result['message'])
         self.assertTrue(output == 201)
+        user = User.query.filter_by(username='dee').first()
+        self.assertIsNotNone(user)
+        self.assertIn('dee', user.username)
 
     def test_register_with_exisitng_username(self):
         db.session.add(self.user)
