@@ -33,7 +33,7 @@ class AllBucketLists(Resource):
             'prev': prev,
             'next': next,
             'count': bucketlist_result.total,
-            'response': str(limit) + ' bucket list records belonging to ' + current_user #note here
+            'response': str(bucketlist_result.total) + ' bucket list records belonging to ' + current_user
         }, 200
 
     def post(self):
