@@ -16,5 +16,5 @@ class Login_User(Resource):
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
-            return login_user(user), 202
-        return CustomMessages.not_acceptable('Please enter a valid username or password'), 406
+            return login_user(user), 200
+        return CustomMessages.bad_request('Please enter a valid username or password'), 400

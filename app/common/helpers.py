@@ -28,6 +28,12 @@ def user_detail(user):
         'message': 'Welcome ' + str(user.username) + ' to the Bucketlist Service.'
     }
 
+def login_user(user):
+    # It displays a message which confirms a valid logged in user.
+    return {
+        'message': 'logged in successfully as {}'.format(user.username),
+        'token': str(user.generate_auth_token())
+    }
 
 def get_current_username(token):
     try:
