@@ -1,14 +1,14 @@
 [![Build Status](https://travis-ci.org/andela-odurodola/BucketListAPI.svg?branch=develop)](https://travis-ci.org/andela-odurodola/BucketListAPI) [![Coverage Status](https://coveralls.io/repos/github/andela-odurodola/BucketListAPI/badge.svg?branch=develop)](https://coveralls.io/github/andela-odurodola/BucketListAPI?branch=develop)[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/andela-odurodola/BucketListAPI/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/andela-odurodola/BucketListAPI/?branch=develop)
 
 ## BucketListAPI
-A flask-RESTful project for Bucketlists. A BucketList is a list of all the goals you want to achieve, dreams you want to fulfill and life experiences you desire to experience before you die (or hit the bucket). This API helps to create and manage bucketlists through protected API endpoints. That is, it requires authorization.
+A flask-RESTful API for Bucketlists. A BucketList is a list of all the goals you want to achieve, dreams you want to fulfill and life experiences you desire to experience before you die (or hit the bucket). This API helps to create and manage bucketlists through protected API endpoints. That is, it requires authorization.
 
 ## Development
 This application was developed using [FlaskRestful](http://flask-restful.readthedocs.io/en/0.3.5/quickstart.html). Sqlite was used for persisting data with [SQLAlchemy](https://www.sqlalchemy.org/) as [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping).
 
 ## Application Features
 # User Authentication
-Users are authenticated and validated using  Python's `itsdangerous` library. It generates a token on login and ensures each account is unique to a user and can't be accessed by an authenticated user.
+Users are authenticated and validated using Python's `itsdangerous` library. It generates a token on login and ensures each account is unique to a user and can't be accessed by an authenticated user.
 
 # Creation of BucketLists and BucketListItems
 Authenticated users can create as many bucketlists and bucketlist items inside each bucketlist created.
@@ -21,8 +21,8 @@ Authenticated users can also search for Bucketlists based on the bucketlist's na
 
 ## Installation
 * Start up your terminal (or Command Prompt on Windows OS).
-* Ensure that you've `python` installed on your PC.
-* Clone the repository by entering the command `git clone https://github.com/andela-odurodola/BucketListAPI/tree/develop` in the terminal.
+* Ensure that you have `python` installed on your PC.
+* Clone the repository by entering the command below ```git clone https://github.com/andela-odurodola/BucketListAPI/tree/develop```
 * Navigate to the project folder using `cd BucketListAPI` on your terminal (or command prompt)
 * After cloning, create a virtual environment then install the requirements with the command:
 `pip install requirements.txt`.
