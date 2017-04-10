@@ -20,15 +20,16 @@ class BaseTest(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
 
-        db.create_all()
         self.user = User(username='damidee', password='yello')
+        self.user_data = {'username': 'damidee',
+                          'password': 'yello'}
 
         self.bucketlist = BucketList(name='Leggo', created_by=self.user.username)
         self.bucketlist1 = BucketList(name='See the world', created_by=self.user.username)
 
         self.bucketlistitem = BucketListItem(name='To greece', done=True, bucketlist_id=1)
-        db.session.add_all([self.user, self.bucketlist, self.bucketlist1, self.bucketlistitem])
-        db.session.commit()
+
+        db.create_all()
 
 
     def tearDown(self):
@@ -42,120 +43,154 @@ class TestResources(BaseTest):
     Unit tests for each resource method such as GET, POST,
     PUT and DELETE.
     """
+    def login_credentials(self):
+        db.session.add(self.user)
+        db.session.commit()
+        login_response = self.client.post('/api/v1/auth/login', data=self.user_data)
+        self.assertTrue(login_response.status_code == 202)
+        user = User.query.filter_by(username='damidee').first()
+        token = user.generate_auth_token()
+        return token
+
+    def test_get_bucketlist_without_login(self):
+        response = self.client.get('/api/v1/bucketlists/')
+        output = response.data
+        self.assertEqual(response.status_code, 401)
+        self.assertIn(b'Login is required', output)
 
     def test_post_bucketlist(self):
-        response = self.client.post('/api/v1/bucketlists/', data={'name': 'Win a Soul'})
+        response = self.client.post('/api/v1/bucketlists/', headers={'Token': self.login_credentials()}, data={'name': 'Win a Soul'})
         output = response.status_code
         self.assertTrue(output == 201)
 
     def test_post_bucketlist_with_existing_name(self):
-        response = self.client.post('/api/v1/bucketlists/', data={'name': 'Leggo'})
-        output = (response.data)
-        self.assertTrue(b'406', output)
-        self.assertIn(b'A Bucketlist with the name already exists', output)
+        db.session.add(self.bucketlist)
+        db.session.commit()
+        response = self.client.post('/api/v1/bucketlists/', headers={'Token':
+                                    self.login_credentials()}, data={'name': 'Leggo'})
+        output = json.loads(response.get_data(as_text=True))
+        self.assertTrue(response.status_code == 406)
+        self.assertIn('A Bucketlist with the name already exists', output['message'])
 
     def test_post_bucketlist_with_no_name(self):
-        response = self.client.post('/api/v1/bucketlists/', data={'name': ''})
-        output = (response.data)
-        self.assertTrue(b'406', output)
-        self.assertIn(b'The BucketList name cannot be empty', output)
+        response = self.client.post('/api/v1/bucketlists/', headers={'Token': self.login_credentials()}, data={'name': ''})
+        output = json.loads(response.get_data(as_text=True))
+        self.assertTrue(response.status_code == 406)
+        self.assertIn('The BucketList name cannot be empty', output['message'])
 
     def test_for_invalid_bucketlist_id(self):
-        response = self.client.get('/api/v1/bucketlists/6')
-        result = response.data
-        msg = response.status_code
-        self.assertTrue(msg == 400)
-        self.assertIn(b'Bucketlist does not exist', result)
+        db.session.add_all([self.bucketlist, self.bucketlist1])
+        db.session.commit()
+        response = self.client.get('/api/v1/bucketlists/6', headers={'Token': self.login_credentials()})
+        output = response.data
+        print(response.status_code)
+        self.assertTrue(response.status_code == 400)
+        self.assertIn(b'Bucketlist does not exist', output)
 
     def test_put_bucketlist_successfully(self):
-        response = self.client.put('/api/v1/bucketlists/1', data={'name': 'Leggo to ibadan'})
-        output = response.status_code
-        self.assertTrue(output == 201)
+        db.session.add(self.bucketlist)
+        db.session.commit()
+        response = self.client.put('/api/v1/bucketlists/1', headers={'Token': self.login_credentials()}, data={'name': 'Leggo to ibadan'})
+        self.assertTrue(response.status_code == 201)
         bucketlist1 = BucketList.query.filter_by(name='Leggo').first()
         bucketlist2 = BucketList.query.filter_by(name='Leggo to ibadan').first()
         self.assertFalse(bucketlist1 == bucketlist2)
 
     def test_put_bucketlist_fail(self):
-        response = self.client.put('/api/v1/bucketlists/1', data={'name': ''})
-        output = response.data
-        re = response.status_code
-        self.assertTrue(re == 400)
-        self.assertTrue(b'The Bucketlist is not updated', output)
+        response = self.client.put('/api/v1/bucketlists/1', headers={'Token': self.login_credentials()}, data={'name': ''})
+        output = json.loads(response.get_data(as_text=True))
+        self.assertTrue(response.status_code == 400)
+        self.assertTrue('The Bucketlist is not updated', output['message'])
 
     def test_delete_a_bucketlist(self):
-        response = self.client.delete('/api/v1/bucketlists/1')
-        output = response.status_code
-        self.assertTrue(output == 200)
+        db.session.add(self.bucketlist)
+        db.session.commit()
+        response = self.client.delete('/api/v1/bucketlists/1', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 200)
+        output = json.loads(response.get_data(as_text=True))
+        self.assertTrue('BucketList has been deleted', output['message'])
 
     def test_get_a_bucketlist(self):
-        response = self.client.get('/api/v1/bucketlists/1')
-        result = response.status_code
-        self.assertTrue(result == 200)
+        db.session.add(self.bucketlist)
+        db.session.commit()
+        response = self.client.get('/api/v1/bucketlists/1', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 200)
 
     def test_get_all_bucketlist(self):
-        response = self.client.get('/api/v1/bucketlists/')
-        result = response.status_code
-        self.assertTrue(result == 200)
+        db.session.add_all([self.bucketlist, self.bucketlist1])
+        db.session.commit()
+        response = self.client.get('/api/v1/bucketlists/', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 200)
 
     def test_for_invalid_url(self):
-        response = self.client.get('/api/bucketlists/')
-        result = response.status_code
-        self.assertTrue(result == 404)
+        response = self.client.get('/api/bucketlists/', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 404)
 
     def test_get_all_bucketlist_items(self):
-        response = self.client.get('/api/v1/bucketlists/1/items/')
-        result = response.status_code
-        self.assertTrue(result == 200)
+        db.session.add_all([self.bucketlist, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.get('/api/v1/bucketlists/1/items/', headers={'Token': self.login_credentials()})
+        print(response.status_code)
+        self.assertTrue(response.status_code == 200)
 
     def test_post_bucketlist_item_succesfully(self):
-        response = self.client.post('/api/v1/bucketlists/2/items/', data={'name': 'By 2020'})
-        output = response.status_code
-        self.assertTrue(output == 201)
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.post('/api/v1/bucketlists/2/items/', headers={'Token': self.login_credentials()}, data={'name': 'By 2020'})
+        self.assertTrue(response.status_code == 201)
         bucket_item = BucketListItem.query.filter_by(name='By 2020',
                                                      bucketlist_id=2).first()
         self.assertIsNotNone(bucket_item)
 
     def test_post_bucketlistitem_with_existing_name(self):
-        response = self.client.post('/api/v1/bucketlists/1/items/', data={'name': 'To greece'})
-        output = response.status_code
-        self.assertTrue(output == 406)
-        result = response.data
-        self.assertIn(b'Bucketlist Item exists', result)
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.post('/api/v1/bucketlists/1/items/', headers={'Token': self.login_credentials()}, data={'name': 'To greece'})
+        self.assertTrue(response.status_code == 406)
+        result = json.loads(response.get_data(as_text=True))
+        self.assertIn('Bucketlist Item exists', result['message'])
 
     def test_post_bucketlistitem_with_no_name(self):
-        response = self.client.post('/api/v1/bucketlists/1/items/', data={'name': ''})
-        output = response.status_code
-        self.assertTrue(output == 406)
-        result = response.data
-        self.assertIn(b'BucketList Item has no name', result)
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.post('/api/v1/bucketlists/1/items/', headers={'Token': self.login_credentials()}, data={'name': ''})
+        self.assertTrue(response.status_code == 406)
+        result = json.loads(response.get_data(as_text=True))
+        self.assertIn('BucketList Item has no name', result['message'])
 
     def test_delete_a_bucketlist_item(self):
-        response = self.client.delete('/api/v1/bucketlists/1/items/1')
-        output = response.status_code
-        self.assertTrue(output == 200)
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.delete('/api/v1/bucketlists/1/items/1', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 200)
 
     def test_get_a_bucketlist_item(self):
-        response = self.client.get('/api/v1/bucketlists/1/items/1')
-        result = response.status_code
-        self.assertTrue(result == 200)
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.get('/api/v1/bucketlists/1/items/1', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 200)
 
-    def test_put_bucketlist_successfully(self):
-        response = self.client.put('/api/v1/bucketlists/1/items/1', data={'done': True})
-        output = response.status_code
-        self.assertTrue(output == 201)
+    def test_put_bucketlist_item_successfully(self):
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.put('/api/v1/bucketlists/1/items/1', headers={'Token': self.login_credentials()}, data={'done': True})
+        self.assertTrue(response.status_code == 201)
         bucketitem1 = BucketListItem.query.filter_by(done=False).first()
         bucketitem2 = BucketListItem.query.filter_by(done=True).first()
         self.assertFalse(bucketitem1 == bucketitem2)
 
     def test_search_bucketlist_name(self):
-        response = self.client.get('/api/v1/bucketlists/?q=leggo')
-        result = response.status_code
-        self.assertTrue(result == 200)
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.get('/api/v1/bucketlists/?q=leggo', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 200)
 
     def test_paginate_bucketlist(self):
-        response = self.client.get('/api/v1/bucketlists/?limit=50')
-        result = response.status_code
-        self.assertTrue(result == 200)
+        db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
+        db.session.commit()
+        response = self.client.get('/api/v1/bucketlists/?limit=50', headers={'Token': self.login_credentials()})
+        self.assertTrue(response.status_code == 200)
+
 
 if __name__ == '__main__':
     unittest.main()

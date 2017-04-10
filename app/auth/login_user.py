@@ -3,7 +3,7 @@ from flask_restful import Resource
 
 from app.models import User
 from app.common.errors import custom_errors
-
+from app.common.helpers import login_user
 
 class Login_User(Resource):
     """
@@ -16,10 +16,5 @@ class Login_User(Resource):
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
-            token = user.generate_auth_token()
-            user_check = user.verify_auth_token(token)
-            return {
-                'Output': 'logged in successfully as {}'.format(user_check.username),
-                'Token': str(token)
-            }, 202
+            return login_user(user), 202
         return custom_errors['IncorrectLoginDetails'], 400

@@ -17,10 +17,11 @@ def login_required(f):
     """
     @wraps(f)
     def decorator(*args, **kwargs):
-        token = request.headers.get('Token')
-        user = User.verify_auth_token(token)
-        if not user.username:
-            abort(400, message='Login is required')
+        try:
+            token = request.headers.get('Token')
+            user = User.verify_auth_token(token)
+        except:
+            abort(401, message='Login is required')
         return f(*args, **kwargs)
     return decorator
 
