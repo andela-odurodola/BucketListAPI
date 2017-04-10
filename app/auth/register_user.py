@@ -3,7 +3,7 @@ from flask_restful import Resource
 
 from app.models import User
 from app.common.errors import custom_errors
-from app.common.helpers import save_into_database, user_detail
+from app.common.helpers import save_into_database, register_user
 
 
 class Register_User(Resource):
@@ -22,6 +22,6 @@ class Register_User(Resource):
             else:
                 user_info = User(username=username, password=password)
                 if save_into_database(user_info):
-                    return(user_detail(user_info)), 201
+                    return(register_user(user_info)), 201
         else:
             return custom_errors['UserDetailsEmpty'], 406

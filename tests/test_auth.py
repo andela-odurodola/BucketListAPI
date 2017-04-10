@@ -1,3 +1,4 @@
+import json
 import unittest
 from flask import Flask
 
@@ -16,7 +17,12 @@ class BaseTest(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
 
+        # reusable instance
         self.user = User(username='damidee', password='yello')
+
+        # create table
+        db.create_all()
+
 
     def tearDown(self):
         db.session.remove()
@@ -26,17 +32,47 @@ class BaseTest(unittest.TestCase):
 
 class TestAuthorization(BaseTest):
 
-    def test_login_with_valid_details(self):
-        pass
-
-    def test_invalid_login_details(self):
-        pass
+    def test_register_succesfully(self):
+        response = self.client.post('/api/v1/auth/register', data={'username': 'dee', 'password': 'hello'})
+        result = json.loads(response.get_data(as_text=True))
+        output = response.status_code
+        self.assertEqual("Welcome dee to the Bucketlist Service.", result['message'])
+        self.assertTrue(output == 201)
 
     def test_register_with_exisitng_username(self):
-        pass
-
-    def test_register_succesfully(self):
-        pass
+        db.session.add(self.user)
+        db.session.commit()
+        response = self.client.post('/api/v1/auth/register', data={'username': 'damidee', 'password': 'andela'})
+        result = json.loads(response.get_data(as_text=True))
+        self.assertEqual(result['message'], "The username already exist.Choose another")
+        output = response.status_code
+        self.assertTrue(output == 406)
 
     def test_register_user_with_blank_fields(self):
-        pass
+        response = self.client.post('/api/v1/auth/register', data={'username': '', 'password': ''})
+        result = json.loads(response.get_data(as_text=True))
+        output = response.status_code
+        self.assertEqual("User's details cannot be empty", result['message'])
+        self.assertTrue(output == 406)
+
+    def test_login_with_valid_details(self):
+        db.session.add(self.user)
+        db.session.commit()
+        response = self.client.post('/api/v1/auth/login', data={'username': 'damidee', 'password': 'yello'})
+        result = json.loads(response.get_data(as_text=True))
+        self.assertEqual("logged in successfully as damidee", result['message'])
+        output = response.status_code
+        self.assertTrue(output == 202)
+
+    def test_invalid_login_details(self):
+        db.session.add(self.user)
+        db.session.commit()
+        response = self.client.post('/api/v1/auth/login', data={'username': 'dadee', 'password': 'yello'})
+        result = json.loads(response.get_data(as_text=True))
+        self.assertIn("Please enter a valid username or password", result['message'])
+        output = response.status_code
+        self.assertTrue(output == 400)
+
+
+if __name__ == '__main__':
+    unittest.main()
