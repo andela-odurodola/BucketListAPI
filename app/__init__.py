@@ -1,18 +1,16 @@
 #!flask/bin/python3/
-
 from flask import Flask, Blueprint
-from flask_restful import Resource, Api
+from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
-
 
 from config import config
 
 db = SQLAlchemy()
 
+
 def create_app(config_name):
-    """
-    Initialization of the application after runtime.
-    """
+    # Initialization of the application after runtime.
+
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)

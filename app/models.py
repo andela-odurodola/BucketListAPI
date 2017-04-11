@@ -50,17 +50,13 @@ class User(db.Model, UserMixin):
         Verify token.
         Verify that the token is valid and return the user id.
         """
+        
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
         # valid token, but expired
-        except SignatureExpired:
+        except (SignatureExpired, BadSignature):
             return None
-
-        # invalid token
-        except BadSignature:
-            return None
-
         return User.query.get(data['id'])
 
     def __repr__(self):

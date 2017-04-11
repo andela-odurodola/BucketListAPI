@@ -10,6 +10,7 @@ class ABucketListItem(Resource):
     It retrieves a single bucket list item based
     on the bucket list id specified.
     """
+
     method_decorators = [invalid_id, invalid_item_id, login_required]
 
     def get(self, bucketlist_id, bucketitem_id):
@@ -17,6 +18,7 @@ class ABucketListItem(Resource):
         The query searches first by looking into the database
         for the bucketlist id and then the bucketlistitem id.
         """
+
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
         bucket_list_item = abucketlistitem(bucketlist_item)
         return {'BucketListItem': bucket_list_item}, 200
@@ -28,15 +30,12 @@ class ABucketListItem(Resource):
 
     def put(self, bucketlist_id, bucketitem_id):
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
-
         name = request.form.get('name')
         bucketlist_item.name = name or bucketlist_item.name
-
         done = request.form.get('done')
         if done:
             done = (done.lower() == 'true')
             bucketlist_item.done = done
-
         if update_database():
             bucket_list_item = abucketlistitem(bucketlist_item)
             return {'BucketList Item': bucket_list_item}, 201

@@ -5,20 +5,17 @@ from app import db
 
 
 def register_user(user):
-    """
-    After a successfull registration,
-    it welcomes the user.
-    """
-    return {
-        'message': 'Welcome ' + str(user.username) + ' to the Bucketlist Service.'
-    }
+    # After successfull registration, it welcomes the user
+    return dict(
+        message='Welcome {} to the Bucketlist Service.'.format(user.username)
+    )
 
 def login_user(user):
     # It displays a message which confirms a valid logged in user.
-    return {
-        'message': 'logged in successfully as {}'.format(user.username),
-        'token': str(user.generate_auth_token())
-    }
+    return dict(
+        message='logged in successfully as {}'.format(user.username),
+        token=str(user.generate_auth_token())
+    )
 
 def get_current_username(token):
     try:
@@ -33,6 +30,7 @@ def abucketlistitem(bucketitem):
     It returns the output for a single bucketlist item
     in a json format.
     """
+
     return {
         'id': bucketitem.id_no,
         'name': bucketitem.name,
@@ -47,6 +45,7 @@ def getallbucketlistitem(bucketlist_id):
     It returns all bucketlist items for a
     particular bucketlist id.
     """
+
     list_items = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id).all()
     return [abucketlistitem(bucketitem)
             for bucketitem in list_items]
@@ -57,6 +56,7 @@ def getbucketlist(bucketlist):
     It returns a single bucketlist based on the
     bucket id specified.
     """
+
     return {
         'id': bucketlist.id_no,
         'name': bucketlist.name,
@@ -81,6 +81,7 @@ def delete_bucketlist(bucketlist):
 
 def update_database():
     # It updates the content of the database.
+
     try:
         db.session.commit()
         return True
