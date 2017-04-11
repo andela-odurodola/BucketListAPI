@@ -3,7 +3,7 @@ from flask_restful import Resource, request
 from app.models import BucketList
 from app.common.decorators import invalid_id, login_required
 from app.common.custom_messages import CustomMessages
-from app.common.helpers import delete_bucketlist, update_database, get_current_username
+from app.common.helpers import delete_bucketlist, update_database, get_current_user
 
 
 class ABucketList(Resource):
@@ -16,15 +16,15 @@ class ABucketList(Resource):
 
     def get(self, bucketlist_id):
         token = request.headers.get('Token')
-        current_user = get_current_username(token)
-        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user).first()
+        current_user = get_current_user(token)
+        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user.id_no).first()
         return bucketlist.to_dict(), 200
 
 
     def delete(self, bucketlist_id):
         token = request.headers.get('Token')
-        current_user = get_current_username(token)
-        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user).first()
+        current_user = get_current_user(token)
+        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user.id_no).first()
         delete_bucketlist(bucketlist)
         return CustomMessages.sucess_message('BucketList has been deleted'), 200
 
@@ -33,15 +33,15 @@ class ABucketList(Resource):
 
         name = request.form.get('name')
         token = request.headers.get('Token')
-        current_user = get_current_username(token)
-        bucketlist_check = BucketList.query.filter_by(name=name, created_by=current_user).first()
+        current_user = get_current_user(token)
+        bucketlist_check = BucketList.query.filter_by(name=name, created_by=current_user.id_no).first()
         if bucketlist_check:
-            return CustomMessages.not_acceptable('This bucketlist has been created by you!'), 406
+            return CustomMessages.conflict('This bucketlist has been created by you!'), 409
         else:
             bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
             bucketlist.name = name
             if name:
                 if update_database():
-                    return bucketlist.to_dict(), 201
+                    return bucketlist.to_dict(), 200
             else:
                 return CustomMessages.bad_request('BucketList Item is not updated'), 400

@@ -19,26 +19,10 @@ def login_user(user):
         token=str(user.generate_auth_token())
     )
 
-def user_detail(user):
-    """
-    After a successfull registration,
-    it welcomes the user.
-    """
-    return {
-        'message': 'Welcome ' + str(user.username) + ' to the Bucketlist Service.'
-    }
-
-def login_user(user):
-    # It displays a message which confirms a valid logged in user.
-    return {
-        'message': 'logged in successfully as {}'.format(user.username),
-        'token': str(user.generate_auth_token())
-    }
-
-def get_current_username(token):
+def get_current_user(token):
     try:
         current_user = User.verify_auth_token(token)
-        return current_user.username
+        return current_user
     except:
         abort(401, message='Invalid Token')
 
