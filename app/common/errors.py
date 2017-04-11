@@ -4,17 +4,10 @@ from flask_restful import abort, request
 from app.models import BucketList, BucketListItem, User
 from functools import wraps
 
-"""
-Custom errors for the Restful API
-is defined here.
-"""
 
-
+# Custom errors for the Restful API is defined here.
 def login_required(f):
-    """
-    A decorator function that checks
-    for a valid user.
-    """
+    # A decorator function that checks for a valid user.
     @wraps(f)
     def decorator(*args, **kwargs):
         try:
@@ -27,9 +20,7 @@ def login_required(f):
 
 
 def invalid_id(f):
-    """A decorator function that checks
-       for a valid bucketlist id.
-    """
+    # A decorator function that checks for a valid bucketlist id
     @wraps(f)
     def decorator(*args, **kwargs):
         bucketlist_id = kwargs.get('bucketlist_id')
@@ -41,9 +32,7 @@ def invalid_id(f):
 
 
 def invalid_item_id(f):
-    """A decorator function that checks
-       for a valid bucketlist item id.
-    """
+    # A decorator function that checks for a valid bucketlist item id
     @wraps(f)
     def decorator(*args, **kwargs):
         bucketlistitem_id = kwargs.get('bucketitem_id')
@@ -88,7 +77,7 @@ custom_errors = {
         'status': 406
     },
     'UserDetailsEmpty': {
-        'message': "User's details cannot be empty",
+        'message': "User's details cannot be empty. Please specify a username and password",
         'status': 406
     },
     'IncorrectLoginDetails': {
@@ -98,5 +87,9 @@ custom_errors = {
     'BucketListAlreadyCreated': {
         'message': "This bucketlist has been created by you!",
         'status': 406
+    },
+    'Account Creation not successfull': {
+        'message': "Oops!.Something went wrong.",
+        'status': 500
     }
 }

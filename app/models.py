@@ -22,17 +22,18 @@ class SerializerMixin(object):
                for attr, column in self.__mapper__.c.items()}
         if rel:
             for attr, relation in self.__mapper__.relationships.items():
-                # Avoid recursive loop between to tables.
-                if backref == relation.table:
-                    continue
-                value = getattr(self, attr)
-                if not value:
-                    continue
-                elif isinstance(value.__class__, DeclarativeMeta):
-                    res[relation.key] = value.to_dict(backref=self.__table__)
-                else:
-                    res[relation.key] = [i.to_dict(backref=self.__table__)
-                                         for i in value]
+                if attr != 'user':
+                    # Avoid recursive loop between to tables.
+                    if backref == relation.table:
+                        continue
+                    value = getattr(self, attr)
+                    if not value:
+                        continue
+                    elif isinstance(value.__class__, DeclarativeMeta):
+                        res[relation.key] = value.to_dict(backref=self.__table__)
+                    else:
+                        res[relation.key] = [i.to_dict(backref=self.__table__)
+                                             for i in value]
         return res
 
 
@@ -56,7 +57,7 @@ class User(db.Model, SerializerMixin, UserMixin):
     id_no = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True)
     password_hash = db.Column(db.String)
-    bucketlist = db.relationship('BucketList', backref='user', lazy='dynamic', cascade="all, delete, delete-orphan")
+    bucketlists = db.relationship('BucketList', backref='user', lazy='dynamic', cascade="all, delete, delete-orphan")
 
     @property
     def password(self):

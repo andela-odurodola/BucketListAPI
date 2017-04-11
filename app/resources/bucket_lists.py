@@ -4,7 +4,7 @@ from app.models import BucketList
 from app.common.decorators import login_required
 
 from app.common.custom_messages import CustomMessages
-from app.common.helpers import save_into_database, get_current_username
+from app.common.helpers import save_into_database, get_current_user
 
 
 class BucketLists(Resource):
@@ -16,9 +16,9 @@ class BucketLists(Resource):
         limit = request.args.get('limit', 20, type=int)
         q = request.args.get('q', '')
         token = request.headers.get('Token')
-        current_user = get_current_username(token)
+        current_user = get_current_user(token)
         limit = 100 if int(limit) > 100 else limit
-        bucketlist_result = BucketList.query.filter_by(created_by=current_user).filter(BucketList.name.ilike('%' +
+        bucketlist_result = BucketList.query.filter_by(created_by=current_user.id_no).filter(BucketList.name.ilike('%' +
                                                     q + '%')).paginate(page=page,
                                                     per_page=limit, error_out=False)
         bucketlists = bucketlist_result.items
@@ -33,20 +33,21 @@ class BucketLists(Resource):
             'prev': prev,
             'next': next,
             'count': bucketlist_result.total,
-            'response': str(bucketlist_result.total) + ' bucket list records belonging to ' + current_user
+            'response': str(bucketlist_result.total) + ' bucket list records belonging to ' + current_user.username
         }, 200
 
     def post(self):
         name = request.form.get('name')
         token = request.headers.get('Token')
-        current_user = get_current_username(token)
-        bucketlist = BucketList.query.filter_by(name=name, created_by=current_user).first()
-        if name:
-            if bucketlist:
-                return CustomMessages.not_acceptable('A Bucketlist with the name already exists'), 406
-            else:
-                bucket_list = BucketList(name=name, created_by=current_user)
-                if save_into_database(bucket_list):
-                    return bucket_list.to_dict(), 201
+        current_user = get_current_user(token)
+        bucketlist = BucketList.query.filter_by(name=name, created_by=current_user.id_no).first()
+        if not name:
+            return CustomMessages.bad_request('The BucketList name cannot be empty'), 400
+        if bucketlist:
+            return CustomMessages.conflict('A Bucketlist with the name already exists'), 409
         else:
-            return CustomMessages.not_acceptable('The BucketList name cannot be empty'), 406
+            bucket_list = BucketList(name=name, created_by=current_user.id_no)
+            if save_into_database(bucket_list):
+                return bucket_list.to_dict(), 200
+            else:
+                return CustomMessages.server_error('Internal Error!. BucketList cannot be saved.'), 500
