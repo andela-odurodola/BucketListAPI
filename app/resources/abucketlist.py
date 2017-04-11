@@ -10,6 +10,7 @@ class ABucketList(Resource):
     It returns a single bucketlist response based
     on a particular request.
     """
+
     method_decorators = [invalid_id, login_required]
 
     def get(self, bucketlist_id):
@@ -23,9 +24,8 @@ class ABucketList(Resource):
         return custom_errors['BucketListDeleted'], 200
 
     def put(self, bucketlist_id):
-        """
-        It updates the bucketlist with a particular id.
-        """
+        # It updates the bucketlist with a particular id.
+        
         name = request.form.get('name')
         token = request.headers.get('Token')
         current_user = get_current_username(token)
