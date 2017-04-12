@@ -16,7 +16,7 @@ class SerializerMixin(object):
     RELATIONSHIPS_TO_DICT = False
 
     def to_dict(self, rel=None, backref=None):
-        if rel is None:
+        if not rel:
             rel = self.RELATIONSHIPS_TO_DICT
         res = {column.key: str(getattr(self, attr))
                for attr, column in self.__mapper__.c.items()}
@@ -26,7 +26,7 @@ class SerializerMixin(object):
                 if backref == relation.table:
                     continue
                 value = getattr(self, attr)
-                if value is None:
+                if not value:
                     continue
                 elif isinstance(value.__class__, DeclarativeMeta):
                     res[relation.key] = value.to_dict(backref=self.__table__)
