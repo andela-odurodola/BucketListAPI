@@ -77,7 +77,7 @@ custom_errors = {
         'status': 406
     },
     'UserDetailsEmpty': {
-        'message': "User's details cannot be empty",
+        'message': "User's details cannot be empty. Please specify a username and password",
         'status': 406
     },
     'IncorrectLoginDetails': {
@@ -87,5 +87,9 @@ custom_errors = {
     'BucketListAlreadyCreated': {
         'message': "This bucketlist has been created by you!",
         'status': 406
+    },
+    'Account Creation not successfull': {
+        'message': "Oops!.Something went wrong.",
+        'status': 500
     }
 }
