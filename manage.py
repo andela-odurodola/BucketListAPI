@@ -1,18 +1,14 @@
 #!flask/bin/python/
 
 import os
-import unittest
 
 from app import create_app, db
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager, prompt_bool, Shell, Server
 
-
 from shell import make_shell_context
 
-
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
-db.init_app(app)
 manager = Manager(app)
 migrate = Migrate(app, db)
 

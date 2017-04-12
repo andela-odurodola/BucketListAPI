@@ -1,11 +1,13 @@
 from flask_restful import Resource, request, url_for
 
 from app.models import BucketList
-from app.common.errors import custom_errors, login_required
-from app.common.helpers import getbucketlist, save_into_database, get_current_username
+from app.common.decorators import login_required
+
+from app.common.custom_messages import CustomMessages
+from app.common.helpers import save_into_database, get_current_username
 
 
-class AllBucketLists(Resource):
+class BucketLists(Resource):
     # It returns all bucketlists.
     method_decorators = [login_required]
 
@@ -41,10 +43,10 @@ class AllBucketLists(Resource):
         bucketlist = BucketList.query.filter_by(name=name, created_by=current_user).first()
         if name:
             if bucketlist:
-                return custom_errors['BucketListNameExistsError'], 406
+                return CustomMessages.not_acceptable('A Bucketlist with the name already exists'), 406
             else:
                 bucket_list = BucketList(name=name, created_by=current_user)
                 if save_into_database(bucket_list):
                     return bucket_list.to_dict(), 201
         else:
-            return custom_errors['BucketListNameIsEmpty'], 406
+            return CustomMessages.not_acceptable('The BucketList name cannot be empty'), 406

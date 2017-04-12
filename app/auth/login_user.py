@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 
 from app.models import User
-from app.common.errors import custom_errors
+from app.common.custom_messages import CustomMessages
 from app.common.helpers import login_user
 
 class Login_User(Resource):
@@ -17,4 +17,4 @@ class Login_User(Resource):
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             return login_user(user), 202
-        return custom_errors['IncorrectLoginDetails'], 400
+        return CustomMessages.not_acceptable('Please enter a valid username or password'), 406

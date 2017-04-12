@@ -1,8 +1,9 @@
 from flask_restful import Resource, request
 
 from app.models import BucketList
-from app.common.errors import custom_errors, invalid_id, login_required
-from app.common.helpers import getbucketlist, delete_bucketlist, update_database, get_current_username
+from app.common.decorators import invalid_id, login_required
+from app.common.custom_messages import CustomMessages
+from app.common.helpers import delete_bucketlist, update_database, get_current_username
 
 
 class ABucketList(Resource):
@@ -14,14 +15,18 @@ class ABucketList(Resource):
     method_decorators = [invalid_id, login_required]
 
     def get(self, bucketlist_id):
-        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
+        token = request.headers.get('Token')
+        current_user = get_current_username(token)
+        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user).first()
         return bucketlist.to_dict(), 200
 
 
     def delete(self, bucketlist_id):
-        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
+        token = request.headers.get('Token')
+        current_user = get_current_username(token)
+        bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user).first()
         delete_bucketlist(bucketlist)
-        return custom_errors['BucketListDeleted'], 200
+        return CustomMessages.sucess_message('BucketList has been deleted'), 200
 
     def put(self, bucketlist_id):
         # It updates the bucketlist with a particular id.
@@ -31,7 +36,7 @@ class ABucketList(Resource):
         current_user = get_current_username(token)
         bucketlist_check = BucketList.query.filter_by(name=name, created_by=current_user).first()
         if bucketlist_check:
-            return custom_errors['BucketListAlreadyCreated'], 406
+            return CustomMessages.not_acceptable('This bucketlist has been created by you!'), 406
         else:
             bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
             bucketlist.name = name
@@ -39,4 +44,4 @@ class ABucketList(Resource):
                 if update_database():
                     return bucketlist.to_dict(), 201
             else:
-                return custom_errors['BucketListNotUpdated'], 400
+                return CustomMessages.bad_request('BucketList Item is not updated'), 400

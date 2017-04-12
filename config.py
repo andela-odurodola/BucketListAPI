@@ -23,14 +23,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
 
-    @staticmethod
-    def init_app(app):
-        """
-        This static method initializes the application using whatever
-        configuration the user has chosen.
-        """
-        pass
-
 
 class DevelopmentConfig(Config):
     """
