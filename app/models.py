@@ -1,16 +1,44 @@
 #!flask/bin/python3/
+import json
 
 from datetime import datetime
 from flask import current_app
 from flask_login import UserMixin
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
-    BadSignature, SignatureExpired)
+                          BadSignature, SignatureExpired)
+from sqlalchemy.ext.declarative import DeclarativeMeta
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db
 
 
-class BucketList(db.Model):
+class SerializerMixin(object):
+    RELATIONSHIPS_TO_DICT = False
+
+    def to_dict(self, rel=None, backref=None):
+        if rel is None:
+            rel = self.RELATIONSHIPS_TO_DICT
+        res = {column.key: str(getattr(self, attr))
+               for attr, column in self.__mapper__.c.items()}
+        if rel:
+            for attr, relation in self.__mapper__.relationships.items():
+                # Avoid recursive loop between to tables.
+                if backref == relation.table:
+                    continue
+                value = getattr(self, attr)
+                if value is None:
+                    continue
+                elif isinstance(value.__class__, DeclarativeMeta):
+                    res[relation.key] = value.to_dict(backref=self.__table__)
+                else:
+                    res[relation.key] = [i.to_dict(backref=self.__table__)
+                                         for i in value]
+        return res
+
+
+class BucketList(db.Model, SerializerMixin):
+    RELATIONSHIPS_TO_DICT = True
+
     id_no = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300), nullable=False)
     items = db.relationship('BucketListItem', backref='bucketlist', lazy='dynamic', cascade="all, delete, delete-orphan")
@@ -22,7 +50,9 @@ class BucketList(db.Model):
         return "<BucketList id '{}': '{}'>".format(self.id_no, self.name)
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, SerializerMixin, UserMixin):
+    RELATIONSHIPS_TO_DICT = True
+
     id_no = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True)
     password_hash = db.Column(db.String)
@@ -50,7 +80,7 @@ class User(db.Model, UserMixin):
         Verify token.
         Verify that the token is valid and return the user id.
         """
-        
+
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
@@ -63,7 +93,7 @@ class User(db.Model, UserMixin):
         return "<User '{}'>".format(self.username)
 
 
-class BucketListItem(db.Model):
+class BucketListItem(db.Model, SerializerMixin):
     id_no = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
