@@ -18,11 +18,13 @@ class BucketItems(Resource):
         bucketlist_item = BucketListItem.query.filter_by(name=name, bucketlist_id=
                                                          bucketlist_id).first()
         if not name:
-            return CustomMessages.not_acceptable('BucketList Item has no name'), 406
+            return CustomMessages.bad_request('BucketList Item has no name'), 400
 
         if bucketlist_item:
-            return CustomMessages.not_acceptable('Bucketlist Item exists'), 406
+            return CustomMessages.conflict('Bucketlist Item exists'), 409
 
         bucketlistitem = BucketListItem(name=name, bucketlist_id=bucketlist_id)
         if save_into_database(bucketlistitem):
-            return bucketlistitem.to_dict(), 201
+            return bucketlistitem.to_dict(), 200
+        else:
+            return CustomMessages.server_error('Internal Error!. BucketList Item cannot be saved.'), 500
