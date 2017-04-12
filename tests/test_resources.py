@@ -194,5 +194,16 @@ class TestResources(BaseTest):
         self.assertTrue(response.status_code == 200)
 
 
+class TestSerialiserMixin(BaseTest):
+
+    def test_models_can_convert_to_dict(self):
+        user_obj = self.user.to_dict()
+        self.assertIsInstance(user_obj, dict)
+        self.assertIsNotNone(user_obj["username"])
+        self.assertIsNotNone(user_obj["password_hash"])
+
+    def test_can_create_models_from_dict(self):
+        pass
+
 if __name__ == '__main__':
     unittest.main()

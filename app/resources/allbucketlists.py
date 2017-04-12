@@ -26,10 +26,8 @@ class AllBucketLists(Resource):
         next = None
         if bucketlist_result.has_next:
             next = url_for('api.allbucketlists', limit=limit, page=page+1, _external=True)
-        bucket_list = [getbucketlist(each_bucketlist)
-                       for each_bucketlist in bucketlists]
         return {
-            'posts': bucket_list,
+            'posts': [bucket_list.to_dict() for bucket_list in bucketlists],
             'prev': prev,
             'next': next,
             'count': bucketlist_result.total,
@@ -47,6 +45,6 @@ class AllBucketLists(Resource):
             else:
                 bucket_list = BucketList(name=name, created_by=current_user)
                 if save_into_database(bucket_list):
-                    return getbucketlist(bucket_list), 201
+                    return bucket_list.to_dict(), 201
         else:
             return custom_errors['BucketListNameIsEmpty'], 406

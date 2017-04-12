@@ -20,8 +20,7 @@ class ABucketListItem(Resource):
         """
 
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
-        bucket_list_item = abucketlistitem(bucketlist_item)
-        return {'BucketListItem': bucket_list_item}, 200
+        return bucketlist_item.to_dict(), 200
 
     def delete(self, bucketlist_id, bucketitem_id):
         bucketlist_item = BucketListItem.query.filter_by(bucketlist_id=bucketlist_id, id_no=bucketitem_id).first()
@@ -37,7 +36,6 @@ class ABucketListItem(Resource):
             done = (done.lower() == 'true')
             bucketlist_item.done = done
         if update_database():
-            bucket_list_item = abucketlistitem(bucketlist_item)
-            return {'BucketList Item': bucket_list_item}, 201
+            return bucketlist_item.to_dict(), 201
         else:
             return custom_errors['BucketListItemNotUpdated'], 400

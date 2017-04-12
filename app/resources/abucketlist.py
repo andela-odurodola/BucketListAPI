@@ -15,8 +15,8 @@ class ABucketList(Resource):
 
     def get(self, bucketlist_id):
         bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
-        bucket_list = getbucketlist(bucketlist)
-        return {'BucketList': bucket_list}, 200
+        return bucketlist.to_dict(), 200
+
 
     def delete(self, bucketlist_id):
         bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
@@ -25,7 +25,7 @@ class ABucketList(Resource):
 
     def put(self, bucketlist_id):
         # It updates the bucketlist with a particular id.
-        
+
         name = request.form.get('name')
         token = request.headers.get('Token')
         current_user = get_current_username(token)
@@ -37,7 +37,6 @@ class ABucketList(Resource):
             bucketlist.name = name
             if name:
                 if update_database():
-                    bucket_list = getbucketlist(bucketlist)
-                    return {'BucketList': bucket_list}, 201
+                    return bucketlist.to_dict(), 201
             else:
                 return custom_errors['BucketListNotUpdated'], 400
