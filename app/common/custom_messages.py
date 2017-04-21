@@ -1,9 +1,5 @@
 #!flask/bin/python3/
-
 from flask_restful import abort, request
-
-from app.models import BucketList, BucketListItem, User
-from functools import wraps
 
 
 class CustomMessages:
