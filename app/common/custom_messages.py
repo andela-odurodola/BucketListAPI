@@ -16,7 +16,7 @@ class CustomMessages:
         response = {'status': 'OK', 'message': message}
         return response
 
-    def not_acceptable(message):
+    def conflict(message):
         # Custom error message for not acceptable requests
 
         response = {'status': 'Not Acceptable', 'message': message}
