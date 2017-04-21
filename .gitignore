@@ -1,9 +1,14 @@
 .DS_Store
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-migrations/
+*.pyc
+
+# Unit test / coverage reports
 .coverage
 .coveragerc
+
 # Database
 *.db
+
+# Migration
+migrations/
