@@ -16,19 +16,22 @@ class TestResources(BaseTest):
 
     def test_get_bucketlist_without_login(self):
         response = self.client.get('/api/v1/bucketlists/')
+
         output = response.data
+
         self.assertEqual(response.status_code, 401)
         self.assertIn(b'Login is required', output)
 
-    def test_post_bucketlist(self):
+    def test_create_bucketlist(self):
         endpoint = '/api/v1/bucketlists/'
         data = {'name': 'Win a Soul'}
 
         response = self.client.post(endpoint, headers={'Token': self.token}, data=data)
 
         self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Win a Soul', response.data)
 
-    def test_post_bucketlist_with_existing_name(self):
+    def test_create_bucketlist_with_existing_name(self):
         db.session.add(self.bucketlist)
         db.session.commit()
         endpoint = '/api/v1/bucketlists/'
@@ -41,7 +44,7 @@ class TestResources(BaseTest):
         self.assertEqual(response.status_code, 409)
         self.assertIn('A Bucketlist with the name already exists', error_message)
 
-    def test_post_bucketlist_with_no_name(self):
+    def test_create_bucketlist_with_no_name(self):
         endpoint = '/api/v1/bucketlists/'
         data = {'name': ''}
 
@@ -137,7 +140,7 @@ class TestResources(BaseTest):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_post_bucketlist_item_succesfully(self):
+    def test_create_bucketlist_item_succesfully(self):
         db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
         db.session.commit()
         endpoint = '/api/v1/bucketlists/2/items/'
@@ -147,7 +150,7 @@ class TestResources(BaseTest):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_post_bucketlistitem_with_existing_name(self):
+    def test_create_bucketlistitem_with_existing_name(self):
         db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
         db.session.commit()
         data = {'name': 'To greece'}
@@ -159,7 +162,7 @@ class TestResources(BaseTest):
         self.assertEqual(response.status_code, 409)
         self.assertIn('Bucketlist Item exists', error_message)
 
-    def test_post_bucketlistitem_with_no_name(self):
+    def test_create_bucketlistitem_with_no_name(self):
         db.session.add_all([self.bucketlist, self.bucketlist1, self.bucketlistitem])
         db.session.commit()
         endpoint = '/api/v1/bucketlists/1/items/'

@@ -3,8 +3,7 @@ from flask_restful import abort, request
 
 
 class CustomMessages:
-    # Custom errors for the Restful API is defined here.
-
+    # Custom errors for the Restful API are defined here.
 
     def sucess_message(message):
         # Custom error message for not acceptable requests

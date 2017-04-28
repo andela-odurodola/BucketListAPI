@@ -18,10 +18,8 @@ class BaseTest(unittest.TestCase):
 
         db.create_all()
 
-        self.create_test_user()
-        self.user = User.query.filter_by(username='damidee').first()
-        self.create_bucket_list()
-        self.bucket_list = BucketList.query.filter_by(name='Leggo').first()
+        self.user = self.create_test_user()
+        self.bucket_list = self.create_bucket_list()
         self.user_data = {
             'username': 'damidee',
             'password': 'yello'
@@ -37,6 +35,8 @@ class BaseTest(unittest.TestCase):
             test_user = User(username='damidee', password='yello')
             db.session.add(test_user)
             db.session.commit()
+            return test_user
+        return user
 
     def create_bucket_list(self):
         bucket_list = BucketList.query.filter_by(name='Leggo').first()
@@ -44,6 +44,8 @@ class BaseTest(unittest.TestCase):
             test_bucketlist = BucketList(name='Leggo', created_by=self.user.id_no)
             db.session.add(test_bucketlist)
             db.session.commit()
+            return test_bucketlist
+        return bucket_list
 
     def get_login_credentials(self):
         login_response = self.client.post('/api/v1/auth/login', data=self.user_data)
@@ -51,7 +53,6 @@ class BaseTest(unittest.TestCase):
         user = User.query.filter_by(username='damidee').first()
         token = user.generate_auth_token()
         return token
-
 
     def tearDown(self):
         db.session.remove()

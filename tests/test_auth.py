@@ -1,5 +1,4 @@
 import json
-import unittest
 
 from app import db
 from app.models import User
@@ -15,7 +14,7 @@ class TestAuthorization(BaseTest):
         response = self.client.post(endpoint, data=data)
         welcome_message = json.loads(response.get_data(as_text=True)).get('message')
 
-        self.assertEqual("Welcome dee to the Bucketlist Service.", welcome_message)
+        self.assertEqual("Welcome {} to the Bucketlist Service.".format(data['username']), welcome_message)
         self.assertEqual(response.status_code, 200)
 
     def test_register_user_persistence(self):
@@ -30,11 +29,11 @@ class TestAuthorization(BaseTest):
         self.assertIsNotNone(user)
         self.assertIn('dee', user.username)
 
-    def test_register_with_exisitng_username(self):
+    def test_register_with_exisiting_username(self):
         db.session.add(self.user)
         db.session.commit()
         endpoint = '/api/v1/auth/register'
-        data = {'username': 'damidee', 'password': 'andela'}
+        data = {'username': self.user.username, 'password': 'andela'}
 
         response = self.client.post(endpoint, data=data)
         error_message = json.loads(response.get_data(as_text=True)).get('message')
@@ -56,12 +55,12 @@ class TestAuthorization(BaseTest):
         db.session.add(self.user)
         db.session.commit()
         endpoint = '/api/v1/auth/login'
-        data = {'username': 'damidee', 'password': 'yello'}
+        data = {'username': self.user.username, 'password': 'yello'}
 
         response = self.client.post(endpoint, data=data)
         login_message = json.loads(response.get_data(as_text=True)).get('message')
 
-        self.assertEqual("logged in successfully as damidee", login_message)
+        self.assertEqual("logged in successfully as {}".format(self.user.username), login_message)
         self.assertEqual(response.status_code, 200)
 
     def test_invalid_login_details(self):
