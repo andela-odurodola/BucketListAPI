@@ -47,7 +47,7 @@ class BucketLists(Resource):
             return CustomMessages.conflict('A Bucketlist with the name already exists'), 409
         else:
             bucket_list = BucketList(name=name, created_by=current_user.id_no)
-            if save_into_database(bucket_list):
+            save_message = save_into_database(bucket_list)
+            if save_message['save_successful']:
                 return bucket_list.to_dict(), 200
-            else:
-                return CustomMessages.server_error('Internal Error!. BucketList cannot be saved.'), 500
+            return save_message['error_message']

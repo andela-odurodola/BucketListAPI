@@ -39,7 +39,7 @@ class BucketItem(Resource):
         if done:
             done = (done.lower() == 'true')
             bucketlist_item.done = done
-        if update_database():
+        update_message = update_database()
+        if update_message['update_successful']:
             return bucketlist_item.to_dict(), 200
-        else:
-            return CustomMessages.bad_request('The Bucketlist is not updated'), 400
+        return update_message['error_message']

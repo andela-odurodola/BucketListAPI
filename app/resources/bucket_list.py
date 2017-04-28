@@ -24,8 +24,10 @@ class ABucketList(Resource):
         token = request.headers.get('Token')
         current_user = get_current_user(token)
         bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user.id_no).first()
-        delete_bucketlist(bucketlist)
-        return CustomMessages.sucess_message('BucketList has been deleted'), 200
+        delete_message = delete_bucketlist(bucketlist)
+        if delete_message['delete_successful']:
+            return CustomMessages.sucess_message('BucketList has been deleted'), 200
+        return delete_message['error_message']
 
     def put(self, bucketlist_id):
         # It updates the bucketlist with a particular id.
@@ -40,7 +42,9 @@ class ABucketList(Resource):
             bucketlist = BucketList.query.filter_by(id_no=bucketlist_id).first()
             bucketlist.name = name
             if name:
-                if update_database():
+                update_message = update_database()
+                if update_message['update_successful']:
                     return bucketlist.to_dict(), 200
-            else:
-                return CustomMessages.bad_request('BucketList Item is not updated'), 400
+                return update_message['error_message']
+
+            return CustomMessages.bad_request('BucketList Item is not updated'), 400

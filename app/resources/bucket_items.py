@@ -24,7 +24,7 @@ class BucketItems(Resource):
             return CustomMessages.conflict('Bucketlist Item exists'), 409
 
         bucketlistitem = BucketListItem(name=name, bucketlist_id=bucketlist_id)
-        if save_into_database(bucketlistitem):
+        save_message = save_into_database(bucketlistitem)
+        if save_message['save_successful']:
             return bucketlistitem.to_dict(), 200
-        else:
-            return CustomMessages.server_error('Internal Error!. BucketList Item cannot be saved.'), 500
+        return save_message['error_message']
