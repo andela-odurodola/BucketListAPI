@@ -25,4 +25,4 @@ class Register_User(Resource):
         save_message = save_into_database(user_info)
         if save_message['save_successful']:
             return(register_user(user_info)), 200
-        return save_message['error_message']
+        return save_message['error_message'], 500

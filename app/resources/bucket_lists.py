@@ -50,4 +50,4 @@ class BucketLists(Resource):
             save_message = save_into_database(bucket_list)
             if save_message['save_successful']:
                 return bucket_list.to_dict(), 200
-            return save_message['error_message']
+            return save_message['error_message'], 500

@@ -27,4 +27,4 @@ class BucketItems(Resource):
         save_message = save_into_database(bucketlistitem)
         if save_message['save_successful']:
             return bucketlistitem.to_dict(), 200
-        return save_message['error_message']
+        return save_message['error_message'], 500

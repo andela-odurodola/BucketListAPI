@@ -22,9 +22,3 @@ class CustomMessages:
 
         response = {'status': 'Bad Request', 'message': message}
         return response
-
-    def server_error(message):
-        # Custom error message for bad requests
-
-        response = {'status': 'Internal Server Error', 'message': message}
-        return response

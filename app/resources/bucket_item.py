@@ -42,4 +42,4 @@ class BucketItem(Resource):
         update_message = update_database()
         if update_message['update_successful']:
             return bucketlist_item.to_dict(), 200
-        return update_message['error_message']
+        return update_message['error_message'], 500

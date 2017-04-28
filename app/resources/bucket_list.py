@@ -45,6 +45,6 @@ class ABucketList(Resource):
                 update_message = update_database()
                 if update_message['update_successful']:
                     return bucketlist.to_dict(), 200
-                return update_message['error_message']
+                return update_message['error_message'], 500
 
             return CustomMessages.bad_request('BucketList Item is not updated'), 400
