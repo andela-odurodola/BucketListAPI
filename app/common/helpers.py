@@ -33,10 +33,15 @@ def delete_bucketlist(bucketlist):
     try:
         db.session.delete(bucketlist)
         db.session.commit()
-        return True
-    except:
+        return {
+            'delete_successful': True
+        }
+    except Exception as e:
         db.session.rollback()
-        raise
+        return {
+            'delete_successful': False,
+            'error_message': e
+        }
 
 
 def update_database():
@@ -44,15 +49,25 @@ def update_database():
 
     try:
         db.session.commit()
-        return True
-    except:
-        return False
+        return {
+            'update_successful': True
+        }
+    except Exception as e:
+        return {
+            'update_successful': False,
+            'error_message': e
+        }
 
 
 def save_into_database(bucketlist):
     try:
         db.session.add(bucketlist)
         db.session.commit()
-        return True
-    except:
-        return False
+        return {
+            'save_successful': True
+        }
+    except Exception as e:
+        return {
+            'save_successful': False,
+            'error_message': e
+        }
