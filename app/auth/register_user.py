@@ -22,7 +22,7 @@ class Register_User(Resource):
         if username_is_taken:
             return CustomMessages.conflict('The username already exist. Choose another'), 409
         user_info = User(username=username, password=password)
-        if save_into_database(user_info):
+        save_message = save_into_database(user_info)
+        if save_message['save_successful']:
             return(register_user(user_info)), 200
-        else:
-            return CustomMessages.server_error('Account Creation not successfull'), 500
+        return save_message['error_message']

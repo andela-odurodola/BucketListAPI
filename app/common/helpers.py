@@ -40,7 +40,7 @@ def delete_bucketlist(bucketlist):
         db.session.rollback()
         return {
             'delete_successful': False,
-            'error_message': e
+            'error_message': 'Could not delete Item. Please try again later'
         }
 
 
@@ -55,7 +55,7 @@ def update_database():
     except Exception as e:
         return {
             'update_successful': False,
-            'error_message': e
+            'error_message': 'Could not update Item. Please try again later'
         }
 
 
@@ -67,7 +67,8 @@ def save_into_database(bucketlist):
             'save_successful': True
         }
     except Exception as e:
+        print(e)
         return {
             'save_successful': False,
-            'error_message': e
+            'error_message': 'Could not create Item. Please try again later'
         }
