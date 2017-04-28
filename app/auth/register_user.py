@@ -20,7 +20,7 @@ class Register_User(Resource):
             return CustomMessages.bad_request("User's details cannot be empty. Please specify a username and password"), 400
         username_is_taken = bool(User.query.filter_by(username=username).first())
         if username_is_taken:
-            return CustomMessages.conflict('The username already exist.Choose another'), 409
+            return CustomMessages.conflict('The username already exist. Choose another'), 409
         user_info = User(username=username, password=password)
         if save_into_database(user_info):
             return(register_user(user_info)), 200

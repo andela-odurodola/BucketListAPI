@@ -20,7 +20,6 @@ class ABucketList(Resource):
         bucketlist = BucketList.query.filter_by(id_no=bucketlist_id, created_by=current_user.id_no).first()
         return bucketlist.to_dict(), 200
 
-
     def delete(self, bucketlist_id):
         token = request.headers.get('Token')
         current_user = get_current_user(token)

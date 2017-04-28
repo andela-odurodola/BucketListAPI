@@ -38,7 +38,7 @@ class TestAuthorization(BaseTest):
         response = self.client.post(endpoint, data=data)
         error_message = json.loads(response.get_data(as_text=True)).get('message')
 
-        self.assertEqual(error_message, "The username already exist.Choose another")
+        self.assertEqual(error_message, "The username already exist. Choose another")
         self.assertEqual(response.status_code, 409)
 
     def test_register_user_with_blank_fields(self):
